@@ -87,6 +87,7 @@ ul {
   font-size: 1.1rem;
   font-weight: bold;
   margin-bottom: 0.3rem;
+  color: #000; /* explizit schwarz */
 }
 
 .playlist-card .desc {

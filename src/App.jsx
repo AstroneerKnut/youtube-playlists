@@ -211,7 +211,11 @@ const PlaylistViewer = () => {
       </div>
       <div className="p-6 max-w-6xl mx-auto">
         <div style={{ height: "1rem" }}></div>
-        {loading && <p className="text-center text-gray-500 mb-4">Playlists werden geladen…</p>}
+        {loading && (
+			<div style={{ display: "flex", justifyContent: "center" }}>
+			<p className="text-gray-500 mb-4">Playlists werden geladen…</p>
+			</div>
+		)}
         <input
           type="text"
           placeholder="Suche nach Playlists..."

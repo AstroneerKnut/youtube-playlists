@@ -200,7 +200,7 @@ const PlaylistViewer = () => {
             left: "50%",
             transform: "translate(-50%, -50%)",
             color: "#eeeeee",
-            fontSize: "clamp(1.5rem, 5vw, 3.5rem)",
+            fontSize: "clamp(1rem, 4vw, 3.5rem)",
             fontFamily: "'Orbitron', sans-serif",
             textAlign: "center",
             textShadow: "2px 2px 4px rgba(0, 0, 0, 0.7)",

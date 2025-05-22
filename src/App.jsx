@@ -216,6 +216,17 @@ const PlaylistViewer = () => {
 			<p className="text-gray-500 mb-4">Playlists werden geladen…</p>
 			</div>
 		)}
+		{!loading && (
+		<p style={{
+			textAlign: "center",
+			fontSize: "1rem",
+			fontWeight: "500",
+			marginBottom: "1rem",
+			color: "#333"
+		}}>
+		Aktuelle Gesamtanzahl verfügbarer Playlists: {playlists.length}
+		</p>
+		)}
         <input
           type="text"
           placeholder="Suche nach Playlists..."

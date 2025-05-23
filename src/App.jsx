@@ -258,9 +258,17 @@ const PlaylistViewer = () => {
         </div>
         <div style={{ height: "1rem" }}></div>
         {!loading && filteredPlaylists.length === 0 ? (
-          <p className="text-center text-lg text-gray-600 font-semibold">
-            Keine Playlists zu den eingestellten Filterkriterien vorhanden
-          </p>
+         <p
+			style={{
+				textAlign: "center",
+				fontSize: "1.1rem",
+				fontWeight: "500",
+				margin: "2rem 0",
+				color: "#666"
+			}}
+		>
+			Keine Playlists zu den eingestellten Filterkriterien vorhanden
+		</p>
         ) : (
           <div className="playlist-grid">
             {filteredPlaylists.map((playlist) => (

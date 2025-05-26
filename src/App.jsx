@@ -233,9 +233,9 @@ return (
             }}
           >
             Aktuelle Gesamtanzahl verfügbarer Playlists: {playlists.length}
-            {filteredPlaylists.length !== playlists.length && (
-              <> – Gefiltert: {filteredPlaylists.length}</>
-            )}
+            {filteredPlaylists.length !== playlists.length &&
+			` – Gefiltert: ${filteredPlaylists.length}`}
+
           </p>
         </>
       )}

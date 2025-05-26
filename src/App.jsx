@@ -257,17 +257,18 @@ const PlaylistViewer = () => {
           </select>
         </div>
         <div style={{ height: "1rem" }}></div>
-        {!loading && filteredPlaylists.length === 0 ? (
-         <p
-			style={{
+		{!loading && (
+			<p style={{
 				textAlign: "center",
-				fontSize: "1.1rem",
+				fontSize: "1rem",
 				fontWeight: "500",
-				margin: "2rem 0",
-				color: "#666"
-			}}
-		>
-			Keine Playlists zu den eingestellten Filterkriterien vorhanden
+				marginBottom: "1rem",
+				color: "#333"
+			}}>
+				Aktuelle Gesamtanzahl verfügbarer Playlists: {playlists.length}
+				{filteredPlaylists.length !== playlists.length && (
+				<> – Gefiltert: {filteredPlaylists.length}</>
+			)}
 		</p>
         ) : (
           <div className="playlist-grid">

@@ -118,13 +118,17 @@ ul {
   border: 1px solid #ccc;
   border-radius: 4px;
 }
+
 .playlist-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 1.5rem;
   justify-content: center;
-  justify-items: center; /* <-- wichtig für zentrierte Karten */
+  justify-items: center;
   padding: 1rem 0;
+  max-width: 1300px; /* ✨ neu: maximale Breite */
+  margin-left: auto; /* ✨ zentriert */
+  margin-right: auto;
 }
 
 .playlist-card {

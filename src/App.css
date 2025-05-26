@@ -62,14 +62,6 @@ ul {
   width: 100%;
   max-width: none;
 }
-.playlist-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
-  justify-items: center;
-  justify-content: center;
-  max-width: 100%;
-}
 
 .playlist-card {
   background-color: #f2f2f2;
@@ -129,8 +121,10 @@ ul {
 .playlist-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1rem;
+  gap: 1.5rem;
   justify-content: center;
+  justify-items: center; /* <-- wichtig für zentrierte Karten */
+  padding: 1rem 0;
 }
 
 .playlist-card {

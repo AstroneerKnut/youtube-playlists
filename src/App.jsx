@@ -328,5 +328,6 @@ return (
     </div>
   </>
 );
+};
 
 export default PlaylistViewer;

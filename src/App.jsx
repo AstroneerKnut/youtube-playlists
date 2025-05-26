@@ -185,123 +185,148 @@ const PlaylistViewer = () => {
     return matchesSearch && matchesYear && matchesGenre;
   });
 
-  return (
-    <>
-      <div style={{ position: "relative", width: "100vw", overflow: "hidden" }}>
-        <img
-          src="/header.jpg"
-          alt="Astroneer Knut Banner"
-          style={{ width: "100%", height: "auto", display: "block" }}
-        />
-        <h1
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            color: "#eeeeee",
-            fontSize: "clamp(1rem, 4vw, 3.5rem)",
-            fontFamily: "'Orbitron', sans-serif",
-            textAlign: "center",
-            textShadow: "2px 2px 4px rgba(0, 0, 0, 0.7)",
-          }}
-        >
-          Astroneer Knut – YouTube Playlists
-        </h1>
-      </div>
-      <div className="p-6 max-w-6xl mx-auto">
-        <div style={{ height: "1rem" }}></div>
-        {loading && (
-			<div style={{ display: "flex", justifyContent: "center" }}>
-			<p className="text-gray-500 mb-4">Playlists werden geladen…</p>
-			</div>
-		)}
-		{!loading && (
-		<p style={{
-			textAlign: "center",
-			fontSize: "1rem",
-			fontWeight: "500",
-			marginBottom: "1rem",
-			color: "#333"
-		}}>
-		Aktuelle Gesamtanzahl verfügbarer Playlists: {playlists.length}
-		</p>
-		)}
-        <input
-          type="text"
-          placeholder="Suche nach Playlists..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="filter-input"
-        />
-        <div className="filter-bar">
-          <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
-            <option value="newest">Neueste zuerst</option>
-            <option value="oldest">Älteste zuerst</option>
-            <option value="name-asc">Name (A–Z)</option>
-            <option value="name-desc">Name (Z–A)</option>
-            <option value="year-asc">Erscheinungsjahr ↑</option>
-            <option value="year-desc">Erscheinungsjahr ↓</option>
-          </select>
-          <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
-            <option value="alle">Alle Jahre</option>
-            {allYears.map((year) => (
-              <option key={year} value={year}>{year}</option>
-            ))}
-          </select>
-          <select value={selectedGenre} onChange={(e) => setSelectedGenre(e.target.value)}>
-            <option value="alle">Alle Genres</option>
-            {allGenres.map((genre) => (
-              <option key={genre} value={genre}>{genre}</option>
-            ))}
-          </select>
+return (
+  <>
+    {/* HEADER-BANNER */}
+    <div style={{ position: "relative", width: "100vw", overflow: "hidden" }}>
+      <img
+        src="/header.jpg"
+        alt="Astroneer Knut Banner"
+        style={{ width: "100%", height: "auto", display: "block" }}
+      />
+      <h1
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          color: "#eeeeee",
+          fontSize: "clamp(1rem, 4vw, 3.5rem)",
+          fontFamily: "'Orbitron', sans-serif",
+          textAlign: "center",
+          textShadow: "2px 2px 4px rgba(0, 0, 0, 0.7)",
+        }}
+      >
+        Astroneer Knut – YouTube Playlists
+      </h1>
+    </div>
+
+    {/* CONTENT-BLOCK */}
+    <div className="p-6 max-w-6xl mx-auto">
+      <div style={{ height: "1rem" }}></div>
+
+      {/* Ladeanzeige */}
+      {loading ? (
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <p className="text-gray-500 mb-4">Playlists werden geladen…</p>
         </div>
-        <div style={{ height: "1rem" }}></div>
-		{!loading && (
-			<p style={{
-				textAlign: "center",
-				fontSize: "1rem",
-				fontWeight: "500",
-				marginBottom: "1rem",
-				color: "#333"
-			}}>
-				Aktuelle Gesamtanzahl verfügbarer Playlists: {playlists.length}
-				{filteredPlaylists.length !== playlists.length && (
-				<> – Gefiltert: {filteredPlaylists.length}</>
-			)}
-		</p>
-        ) : (
-          <div className="playlist-grid">
-            {filteredPlaylists.map((playlist) => (
-              <div key={playlist.id} className="playlist-card">
-                <a
-                  href={`https://www.youtube.com/playlist?list=${playlist.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <div className="thumbnail-wrapper">
-                    <img
-                      src={playlist.snippet.thumbnails.medium.url}
-                      alt={playlist.snippet.title}
-                      className="playlist-thumb"
-                    />
-                  </div>
-                </a>
-                <h2>{playlist.snippet.title}</h2>
-                <p className="desc">{playlist.snippet.description.split("\n")[0]}</p>
-                {playlist.year && <p className="meta">Erscheinungsjahr: {playlist.year}</p>}
-                {playlist.genres?.length > 0 && (
-                  <p className="meta">Genre: {playlist.genres.join(", ")}</p>
-                )}
-                <p className="meta">Videos: {playlist.contentDetails.itemCount} {playlist.contentDetails.itemCountSource === "api" && <span style={{ color: 'red' }}>(aktuell)</span>}</p>
-                <p className="meta">Länge: {playlist.totalDuration} {playlist.durationSource === "api" && <span style={{ color: 'red' }}>(aktuell)</span>}</p>
-              </div>
-            ))}
-          </div>
-        )}
+      ) : (
+        <>
+          {/* Gesamtanzahl + Gefiltert */}
+          <p
+            style={{
+              textAlign: "center",
+              fontSize: "1rem",
+              fontWeight: "500",
+              marginBottom: "1rem",
+              color: "#333",
+            }}
+          >
+            Aktuelle Gesamtanzahl verfügbarer Playlists: {playlists.length}
+            {filteredPlaylists.length !== playlists.length && (
+              <> – Gefiltert: {filteredPlaylists.length}</>
+            )}
+          </p>
+        </>
+      )}
+
+      {/* Suchfeld */}
+      <input
+        type="text"
+        placeholder="Suche nach Playlists..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="filter-input"
+      />
+
+      {/* Filterleiste */}
+      <div className="filter-bar">
+        <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
+          <option value="newest">Neueste zuerst</option>
+          <option value="oldest">Älteste zuerst</option>
+          <option value="name-asc">Name (A–Z)</option>
+          <option value="name-desc">Name (Z–A)</option>
+          <option value="year-asc">Erscheinungsjahr ↑</option>
+          <option value="year-desc">Erscheinungsjahr ↓</option>
+        </select>
+        <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+          <option value="alle">Alle Jahre</option>
+          {allYears.map((year) => (
+            <option key={year} value={year}>{year}</option>
+          ))}
+        </select>
+        <select value={selectedGenre} onChange={(e) => setSelectedGenre(e.target.value)}>
+          <option value="alle">Alle Genres</option>
+          {allGenres.map((genre) => (
+            <option key={genre} value={genre}>{genre}</option>
+          ))}
+        </select>
       </div>
-    </>
-  );
-};
+
+      <div style={{ height: "1rem" }}></div>
+
+      {/* Ergebnisanzeige */}
+      {!loading && filteredPlaylists.length === 0 ? (
+        <p style={{
+          textAlign: "center",
+          fontSize: "1.1rem",
+          fontWeight: "500",
+          margin: "2rem 0",
+          color: "#666"
+        }}>
+          Keine Playlists zu den eingestellten Filterkriterien vorhanden
+        </p>
+      ) : (
+        <div className="playlist-grid">
+          {filteredPlaylists.map((playlist) => (
+            <div key={playlist.id} className="playlist-card">
+              <a
+                href={`https://www.youtube.com/playlist?list=${playlist.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div className="thumbnail-wrapper">
+                  <img
+                    src={playlist.snippet.thumbnails.medium.url}
+                    alt={playlist.snippet.title}
+                    className="playlist-thumb"
+                  />
+                </div>
+              </a>
+              <h2 style={{ color: "#000" }}>{playlist.snippet.title}</h2>
+              <p className="desc">{playlist.snippet.description.split("\n")[0]}</p>
+              {playlist.year && <p className="meta">Erscheinungsjahr: {playlist.year}</p>}
+              {playlist.genres?.length > 0 && (
+                <p className="meta">Genre: {playlist.genres.join(", ")}</p>
+              )}
+              <p className="meta">
+                Videos: {playlist.contentDetails.itemCount}{" "}
+                {playlist.contentDetails.itemCountSource === "api" && (
+                  <span style={{ color: "red" }}>(aktuell)</span>
+                )}
+              </p>
+              <p className="meta">
+                Länge: {playlist.totalDuration}{" "}
+                {playlist.durationSource === "api" && (
+                  <span style={{ color: "red" }}>(aktuell)</span>
+                )}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </>
+);
 
 export default PlaylistViewer;

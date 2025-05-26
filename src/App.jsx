@@ -287,6 +287,7 @@ return (
           Keine Playlists zu den eingestellten Filterkriterien vorhanden
         </p>
       ) : (
+	  <div className="playlist-container">
         <div className={`playlist-grid ${filteredPlaylists.length <= 4 ? "grid-narrow" : ""}`}>
           {filteredPlaylists.map((playlist) => (
             <div key={playlist.id} className="playlist-card">
@@ -324,6 +325,7 @@ return (
             </div>
           ))}
         </div>
+		</div>
       )}
     </div>
   </>

@@ -229,7 +229,6 @@ return (
               fontSize: "1rem",
               fontWeight: "500",
               marginBottom: "1rem",
-              color: "#333",
             }}
           >
             Aktuelle Gesamtanzahl verfügbarer Playlists: {playlists.length}

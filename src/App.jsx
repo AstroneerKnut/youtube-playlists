@@ -10,6 +10,7 @@ const PlaylistViewer = () => {
   const [search, setSearch] = useState("");
   const [sortOption, setSortOption] = useState("newest");
   const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState(null);
   const [selectedYear, setSelectedYear] = useState("alle");
   const [selectedGenre, setSelectedGenre] = useState("alle");
   const [allYears, setAllYears] = useState([]);
@@ -21,16 +22,19 @@ const PlaylistViewer = () => {
 
   const fetchAllPlaylists = async () => {
     setLoading(true);
+	setApiError(null);
     let allPlaylists = [];
     let allGenreSet = new Set();
     let allYearSet = new Set();
     let pageToken = "";
 
+try {
     do {
       const response = await fetch(
         `https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&channelId=${CHANNEL_ID}&maxResults=${MAX_RESULTS}&pageToken=${pageToken}&key=${API_KEY}`
       );
       const data = await response.json();
+	  if (data.error) throw new Error(data.error.message);
       if (data.items) {
         const enriched = await Promise.all(
           data.items.map(async (playlist) => {
@@ -67,6 +71,9 @@ const PlaylistViewer = () => {
     setPlaylists(allPlaylists);
     setAllYears(Array.from(allYearSet).sort((a, b) => b - a));
     setAllGenres(Array.from(allGenreSet).sort());
+	} catch (err) {
+      setApiError("Das Tageslimit der YouTube API wurde erreicht. Bitte versuche es morgen erneut.");
+    }
     setLoading(false);
   };
 
@@ -222,6 +229,17 @@ return (
         </div>
       ) : (
         <>
+		    {/* Fehleranzeige bei API-Problem */}
+    {apiError && (
+      <div style={{
+        textAlign: "center",
+        color: "red",
+        fontWeight: "bold",
+        marginBottom: "1rem"
+      }}>
+        {apiError}
+      </div>
+    )}
           {/* Gesamtanzahl + Gefiltert */}
           <p
             style={{

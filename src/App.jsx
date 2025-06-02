@@ -77,35 +77,39 @@ try {
     setLoading(false);
   };
 
-  const parseDescription = (desc) => {
-    const lines = desc.split("\n").map((line) => line.trim());
-    let year = null;
-    let genres = [];
-    let length = null;
-    let videoCount = null;
+const parseDescription = (desc) => {
+  const lines = desc.split("\n").map((line) => line.trim());
+  let year = null;
+  let yearFullText = null;
+  let genres = [];
+  let length = null;
+  let videoCount = null;
 
-    lines.forEach((line) => {
-      if (line.toLowerCase().startsWith("erscheinungsjahr:")) {
-        const match = line.match(/Erscheinungsjahr:\s*(\d{4})/i);
-        if (match) year = match[1];
+  lines.forEach((line) => {
+    if (line.toLowerCase().startsWith("erscheinungsjahr:")) {
+      yearFullText = line.replace(/^Erscheinungsjahr:\s*/i, "").trim();
+      const match = yearFullText.match(/^(\d{4})/);
+      if (match) year = match[1];
+    }
+    if (line.toLowerCase().startsWith("genre:")) {
+      const match = line.match(/Genre:\s*(.+)/i);
+      if (match) {
+        genres = match[1].split(",").map((g) => g.trim());
       }
-      if (line.toLowerCase().startsWith("genre:")) {
-        const match = line.match(/Genre:\s*(.+)/i);
-        if (match) {
-          genres = match[1].split(",").map((g) => g.trim());
-        }
-      }
-      if (line.toLowerCase().startsWith("videos:")) {
-        const match = line.match(/Videos:\s*(\d+)/i);
-        if (match) videoCount = parseInt(match[1]);
-      }
-      if (line.toLowerCase().startsWith("länge:")) {
-        const match = line.match(/Länge:\s*(.+)/i);
-        if (match) length = match[1];
-      }
-    });
-    return { year, genres, length, videoCount };
-  };
+    }
+    if (line.toLowerCase().startsWith("videos:")) {
+      const match = line.match(/Videos:\s*(\d+)/i);
+      if (match) videoCount = parseInt(match[1]);
+    }
+    if (line.toLowerCase().startsWith("länge:")) {
+      const match = line.match(/Länge:\s*(.+)/i);
+      if (match) length = match[1];
+    }
+  });
+
+  return { year, yearFullText, genres, length, videoCount };
+};
+
 
   const checkPlaylistHasPublicVideos = async (playlistId) => {
     const response = await fetch(
@@ -323,7 +327,7 @@ return (
               </a>
               <h2 style={{ color: "#000" }}>{playlist.snippet.title}</h2>
               <p className="desc">{playlist.snippet.description.split("\n")[0]}</p>
-              {playlist.year && <p className="meta">Erscheinungsjahr: {playlist.year}</p>}
+              {playlist.yearFullText && <p className="meta">Erscheinungsjahr: {playlist.yearFullText}</p>}
               {playlist.genres?.length > 0 && (
                 <p className="meta">Genre: {playlist.genres.join(", ")}</p>
               )}

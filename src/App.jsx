@@ -59,6 +59,7 @@ try {
                 itemCountSource: videoCount !== null ? "description" : "api",
               },
               year,
+			  yearFullText,
               genres,
             };
           })

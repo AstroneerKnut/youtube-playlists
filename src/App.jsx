@@ -41,7 +41,7 @@ try {
             const hasPublicVideos = await checkPlaylistHasPublicVideos(playlist.id);
             if (!hasPublicVideos) return null;
 
-            const { year, genres, length, videoCount } = parseDescription(playlist.snippet.description || "");
+            const { year, yearFullText, genres, length, videoCount } = parseDescription(playlist.snippet.description || "");
 
             if (year) allYearSet.add(year);
             genres.forEach((g) => allGenreSet.add(g));

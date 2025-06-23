@@ -46,12 +46,15 @@ try {
             if (year) allYearSet.add(year);
             genres.forEach((g) => allGenreSet.add(g));
 
-            const totalDuration = length || await getPlaylistDuration(playlist.id);
+            const { formatted: totalDuration, seconds: totalSeconds } = length
+			? { formatted: length, seconds: 0 }
+			: await getPlaylistDuration(playlist.id);
             const itemCount = videoCount !== null ? videoCount : await getPublicVideoCount(playlist.id);
 
             return {
               ...playlist,
               totalDuration,
+			  totalSeconds,
               durationSource: length ? "description" : "api",
               contentDetails: {
                 ...playlist.contentDetails,
@@ -134,29 +137,32 @@ const parseDescription = (desc) => {
     return count;
   };
 
-  const getPlaylistDuration = async (playlistId) => {
-    let totalSeconds = 0;
-    let pageToken = "";
-    do {
-      const response = await fetch(
-        `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId=${playlistId}&maxResults=50&pageToken=${pageToken}&key=${API_KEY}`
+const getPlaylistDuration = async (playlistId) => {
+  let totalSeconds = 0;
+  let pageToken = "";
+  do {
+    const response = await fetch(
+      `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId=${playlistId}&maxResults=50&pageToken=${pageToken}&key=${API_KEY}`
+    );
+    const data = await response.json();
+    const videoIds = data.items.map((item) => item.contentDetails.videoId).join(",");
+    if (videoIds) {
+      const videoResponse = await fetch(
+        `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds}&key=${API_KEY}`
       );
-      const data = await response.json();
-      const videoIds = data.items.map((item) => item.contentDetails.videoId).join(",");
-      if (videoIds) {
-        const videoResponse = await fetch(
-          `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds}&key=${API_KEY}`
-        );
-        const videoData = await videoResponse.json();
-        videoData.items.forEach((video) => {
-          const duration = video.contentDetails.duration;
-          totalSeconds += parseISODuration(duration);
-        });
-      }
-      pageToken = data.nextPageToken;
-    } while (pageToken);
-    return formatDuration(totalSeconds);
+      const videoData = await videoResponse.json();
+      videoData.items.forEach((video) => {
+        const duration = video.contentDetails.duration;
+        totalSeconds += parseISODuration(duration);
+      });
+    }
+    pageToken = data.nextPageToken;
+  } while (pageToken);
+  return {
+    formatted: formatDuration(totalSeconds),
+    seconds: totalSeconds
   };
+};
 
   const parseISODuration = (duration) => {
     const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
@@ -186,6 +192,8 @@ const parseDescription = (desc) => {
       if (sortOption === "oldest") return new Date(a.snippet.publishedAt) - new Date(b.snippet.publishedAt);
       if (sortOption === "year-asc") return (a.year || 0) - (b.year || 0);
       if (sortOption === "year-desc") return (b.year || 0) - (a.year || 0);
+	  if (sortOption === "duration-asc") return (a.totalSeconds || 0) - (b.totalSeconds || 0);
+	  if (sortOption === "duration-desc") return (b.totalSeconds || 0) - (a.totalSeconds || 0);
       return 0;
     });
 
@@ -274,13 +282,15 @@ return (
       {/* Filterleiste */}
       <div className="filter-bar">
         <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
-          <option value="newest">Neueste zuerst</option>
-          <option value="oldest">Älteste zuerst</option>
-          <option value="name-asc">Name (A–Z)</option>
-          <option value="name-desc">Name (Z–A)</option>
-          <option value="year-asc">Erscheinungsjahr ↑</option>
-          <option value="year-desc">Erscheinungsjahr ↓</option>
-        </select>
+			<option value="newest">Neueste zuerst</option>
+			<option value="oldest">Älteste zuerst</option>
+			<option value="name-asc">Name (A–Z)</option>
+			<option value="name-desc">Name (Z–A)</option>
+			<option value="year-asc">Erscheinungsjahr ↑</option>
+			<option value="year-desc">Erscheinungsjahr ↓</option>
+			<option value="duration-asc">Gesamtlänge ↑</option>
+			<option value="duration-desc">Gesamtlänge ↓</option>
+		</select>
         <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
           <option value="alle">Alle Jahre</option>
           {allYears.map((year) => (

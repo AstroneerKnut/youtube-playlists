@@ -46,25 +46,27 @@ try {
             if (year) allYearSet.add(year);
             genres.forEach((g) => allGenreSet.add(g));
 
-            const { formatted: totalDuration, seconds: totalSeconds } = length
-			? { formatted: length, seconds: 0 }
-			: await getPlaylistDuration(playlist.id);
+			const totalSeconds = length ? parseManualDuration(length) : null;
+			const { formatted: totalDuration, seconds: computedSeconds } = await getPlaylistDuration(playlist.id);
+			const finalDuration = length ? length : totalDuration;
+			const finalSeconds = length ? totalSeconds : computedSeconds;
             const itemCount = videoCount !== null ? videoCount : await getPublicVideoCount(playlist.id);
 
-            return {
-              ...playlist,
-              totalDuration,
-			  totalSeconds,
-              durationSource: length ? "description" : "api",
-              contentDetails: {
-                ...playlist.contentDetails,
-                itemCount,
-                itemCountSource: videoCount !== null ? "description" : "api",
-              },
-              year,
-			  yearFullText,
-              genres,
-            };
+			return {
+			...playlist,
+			totalDuration: finalDuration,
+			totalSeconds: finalSeconds,
+			durationSource: length ? "description" : "api",
+			contentDetails: {
+				...playlist.contentDetails,
+				itemCount,
+				itemCountSource: videoCount !== null ? "description" : "api",
+			},
+			year,
+			yearFullText,
+			genres,
+			};
+
           })
         );
         allPlaylists = [...allPlaylists, ...enriched.filter(Boolean)];
@@ -204,6 +206,14 @@ const getPlaylistDuration = async (playlistId) => {
     const matchesGenre = selectedGenre === "alle" || (p.genres || []).includes(selectedGenre);
     return matchesSearch && matchesYear && matchesGenre;
   });
+
+const parseManualDuration = (text) => {
+  const hourMatch = text.match(/(\d+)\s*h/);
+  const minuteMatch = text.match(/(\d+)\s*m/);
+  const hours = hourMatch ? parseInt(hourMatch[1]) : 0;
+  const minutes = minuteMatch ? parseInt(minuteMatch[1]) : 0;
+  return hours * 3600 + minutes * 60;
+};
 
 return (
   <>
